@@ -445,6 +445,23 @@ Production safeguards:
 - Pipelines **fail fast** when required variables (Cognito config, role ARN, region) are missing
 - **Post-deploy smoke test** against the live health endpoint
 
+### Pipelines
+
+Deploys are run on demand as custom Bitbucket pipelines, so nothing reaches an environment without someone choosing to trigger it.
+
+| Pipeline                       | What it does                                                                                   |
+| ------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `custom: deploy-dev`           | Full test, build and deploy to the dev environment                                             |
+| `custom: deploy-prod`          | Production deploy from `develop`: backup DynamoDB, `terraform apply`, invalidate CDN, smoke test |
+| `custom: deploy-prod-plan-only`| Runs `terraform plan` against production so changes can be reviewed before they are applied      |
+| `custom: security-scan`        | Shared security scan of dependencies and code                                                   |
+
+<p align="center">
+  <img src="screenshots/bitbucket-pipelines.png" width="600" alt="Bitbucket 'Run Pipeline' dialog on the develop branch, listing deploy-dev, deploy-prod, deploy-prod-plan-only and security-scan"/>
+  <br/>
+  <em>Triggering a pipeline from the <code>develop</code> branch in Bitbucket</em>
+</p>
+
 ---
 
 ## 🔌 API Surface
